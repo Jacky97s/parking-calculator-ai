@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // 獲取DOM元素
+    // Get DOM elements
     const ruleImageInput = document.getElementById('rule-image');
     const imagePreview = document.getElementById('image-preview');
     const uploadArea = document.getElementById('upload-area');
     const uploadStatus = document.getElementById('upload-status');
     const resetUploadBtn = document.getElementById('reset-upload-btn');
     
-    // 日期時間選擇器元素
+    // Date time picker elements
     const entryDateInput = document.getElementById('entry-date');
     const entryTimeInput = document.getElementById('entry-time');
     const exitDateInput = document.getElementById('exit-date');
@@ -14,11 +14,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const nowEntryBtn = document.getElementById('now-entry-btn');
     const plusHourBtn = document.getElementById('plus-hour-btn');
     
-    // 按鈕和結果元素
+    // Button and result elements
     const calculateBtn = document.getElementById('calculate-btn');
     const feeResult = document.getElementById('fee-result');
     
-    // 設定相關元素
+    // Settings related elements
     const settingsBtn = document.getElementById('settings-btn');
     const settingsModal = document.getElementById('settings-modal');
     const closeModalBtn = document.getElementById('close-modal-btn');
@@ -26,45 +26,45 @@ document.addEventListener('DOMContentLoaded', function() {
     const apiKeyInput = document.getElementById('api-key');
     const togglePasswordBtn = document.getElementById('toggle-password');
     
-    // 加載指示器
+    // Loading indicator
     const loadingOverlay = document.getElementById('loading-overlay');
     const loadingMessage = document.getElementById('loading-message');
     
-    // 儲存解析後的停車規則
+    // Store parsed parking rules
     let parsedParkingRules = null;
-    // 儲存動態生成的計算函數
+    // Store dynamically generated calculation function
     let dynamicCalculatorFunction = null;
-    // 儲存動態函數的原始代碼
+    // Store the original code of the dynamic function
     let calculatorFunctionCode = '';
-    // 儲存API密鑰
+    // Store API key
     let apiKey = localStorage.getItem('openai_api_key') || '';
-    // 儲存上傳的照片
+    // Store uploaded photo
     let uploadedImageSrc = '';
     
-    // 初始化
+    // Initialize
     init();
     
     function init() {
-        // 設置API密鑰（如果有）
+        // Set API key (if available)
         apiKeyInput.value = apiKey;
         
-        // 設定當前時間
+        // Set current time
         setCurrentDateTime();
         
-        // 添加事件監聽器
+        // Add event listeners
         addEventListeners();
         
-        // 檢查是否有儲存的API密鑰
+        // Check if there is a stored API key
         updateUIBasedOnAPIKey();
         
-        // 檢查是否有儲存的照片和計算函數
+        // Check if there are stored photos and calculation functions
         restoreFromLocalStorage();
     }
     
-    // 從localStorage恢復數據
+    // Restore data from localStorage
     function restoreFromLocalStorage() {
         try {
-            // 恢復照片
+            // Restore photo
             const savedImageSrc = localStorage.getItem('parking_calculator_image');
             if (savedImageSrc) {
                 uploadedImageSrc = savedImageSrc;
@@ -74,104 +74,104 @@ document.addEventListener('DOMContentLoaded', function() {
                 disableUploadArea();
             }
             
-            // 恢復解析規則
+            // Restore parsed rules
             const savedRules = localStorage.getItem('parking_calculator_rules');
             if (savedRules) {
                 parsedParkingRules = JSON.parse(savedRules);
             }
             
-            // 恢復計算函數
+            // Restore calculation function
             const savedFunctionCode = localStorage.getItem('parking_calculator_function');
             if (savedFunctionCode) {
                 calculatorFunctionCode = savedFunctionCode;
                 
                 try {
-                    // 重新創建函數
+                    // Recreate function
                     dynamicCalculatorFunction = new Function('entryTime', 'exitTime', `
                         ${calculatorFunctionCode}
                         try {
                             return calculateFee(entryTime, exitTime);
                         } catch (e) {
-                            console.error("計算函數執行錯誤:", e);
+                            console.error("Calculation function execution error:", e);
                             throw e;
                         }
                     `);
                     
-                    // 測試函數可用性
+                    // Test function usability
                     const testEntry = new Date();
                     const testExit = new Date(testEntry.getTime() + 60 * 60 * 1000);
                     const testFee = dynamicCalculatorFunction(testEntry, testExit);
-                    console.log('已從本地儲存恢復計算函數，測試結果:', testFee);
+                    console.log('Calculation function restored from local storage, test result:', testFee);
                     
-                    // 啟用計算按鈕
+                    // Enable calculate button
                     calculateBtn.disabled = false;
                     
-                    showToast('已從本地儲存恢復數據', 'info');
+                    showToast('Data restored from local storage', 'info');
                 } catch (error) {
-                    console.error('恢復計算函數錯誤:', error);
-                    showToast('恢復計算函數失敗，請重新上傳圖片', 'error');
+                    console.error('Error restoring calculation function:', error);
+                    showToast('Failed to restore calculation function, please upload image again', 'error');
                     resetLocalStorage();
                 }
             }
         } catch (error) {
-            console.error('從本地儲存恢復數據錯誤:', error);
+            console.error('Error restoring data from local storage:', error);
             resetLocalStorage();
         }
     }
     
-    // 儲存數據到localStorage
+    // Save data to localStorage
     function saveToLocalStorage() {
         try {
-            // 儲存照片
+            // Save photo
             if (uploadedImageSrc) {
                 localStorage.setItem('parking_calculator_image', uploadedImageSrc);
             }
             
-            // 儲存解析規則
+            // Save parsed rules
             if (parsedParkingRules) {
                 localStorage.setItem('parking_calculator_rules', JSON.stringify(parsedParkingRules));
             }
             
-            // 儲存計算函數
+            // Save calculation function
             if (calculatorFunctionCode) {
                 localStorage.setItem('parking_calculator_function', calculatorFunctionCode);
             }
             
-            console.log('數據已保存到本地儲存');
+            console.log('Data saved to local storage');
         } catch (error) {
-            console.error('保存到本地儲存錯誤:', error);
-            showToast('保存數據失敗，可能是數據過大', 'warning');
+            console.error('Error saving to local storage:', error);
+            showToast('Failed to save data, possibly due to large data size', 'warning');
         }
     }
     
-    // 清除localStorage
+    // Clear localStorage
     function resetLocalStorage() {
         localStorage.removeItem('parking_calculator_image');
         localStorage.removeItem('parking_calculator_rules');
         localStorage.removeItem('parking_calculator_function');
-        console.log('已清除本地儲存的數據');
+        console.log('Local storage data cleared');
     }
     
     function addEventListeners() {
-        // 設定相關
+        // Settings related
         settingsBtn.addEventListener('click', openSettingsModal);
         closeModalBtn.addEventListener('click', closeSettingsModal);
         saveSettingsBtn.addEventListener('click', saveSettings);
         togglePasswordBtn.addEventListener('click', togglePasswordVisibility);
         
-        // 上傳相關
+        // Upload related
         ruleImageInput.addEventListener('change', handleImageUpload);
         uploadArea.addEventListener('dragover', handleDragOver);
         uploadArea.addEventListener('drop', handleDrop);
         uploadArea.addEventListener('click', function(e) {
-            // 避免重複觸發，如果點擊的是 input 元素本身，不再額外觸發
+            // Avoid duplicate triggers, if clicking on the input element itself, don't trigger again
             if (e.target !== ruleImageInput) {
                 triggerFileInput();
             }
         });
         resetUploadBtn.addEventListener('click', resetUpload);
         
-        // 時間相關
+        // Time related
         nowEntryBtn.addEventListener('click', setCurrentDateTime);
         plusHourBtn.addEventListener('click', addOneHour);
         entryDateInput.addEventListener('change', validateDateTimes);
@@ -179,10 +179,10 @@ document.addEventListener('DOMContentLoaded', function() {
         exitDateInput.addEventListener('change', validateDateTimes);
         exitTimeInput.addEventListener('change', validateDateTimes);
         
-        // 計算相關
+        // Calculation related
         calculateBtn.addEventListener('click', calculateParkingFee);
         
-        // 點擊模態框外部關閉模態框
+        // Click outside modal to close
         window.addEventListener('click', function(e) {
             if (e.target === settingsModal) {
                 closeSettingsModal();
@@ -190,44 +190,44 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // 重設上傳區域
+    // Reset upload area
     function resetUpload() {
-        // 清空圖片預覽
+        // Clear image preview
         imagePreview.innerHTML = '';
         
-        // 啟用上傳區域
+        // Enable upload area
         uploadArea.classList.remove('disabled');
         ruleImageInput.classList.remove('disabled');
         ruleImageInput.value = '';
         
-        // 隱藏上傳狀態
+        // Hide upload status
         uploadStatus.textContent = '';
         uploadStatus.className = 'status-indicator';
         uploadStatus.style.display = 'none';
         
-        // 隱藏重設按鈕
+        // Hide reset button
         resetUploadBtn.style.display = 'none';
         
-        // 重置解析結果
+        // Reset parsing state
         resetParsingState();
         
-        // 禁用計算按鈕
+        // Disable calculate button
         calculateBtn.disabled = true;
         
-        // 重置結果區域
-        feeResult.textContent = '請上傳圖片並設定時間後計算';
+        // Reset result area
+        feeResult.textContent = 'Please upload an image and set time before calculating';
         
-        // 清除本地儲存
+        // Clear local storage
         resetLocalStorage();
         
-        // 清除上傳的圖片
+        // Clear uploaded image
         uploadedImageSrc = '';
         
-        // 顯示提示
-        showToast('已重設，可重新上傳圖片', 'info');
+        // Show notification
+        showToast('Reset complete, you can upload a new image', 'info');
     }
     
-    // 設定相關函數
+    // Settings related functions
     function openSettingsModal() {
         settingsModal.classList.add('active');
     }
@@ -239,13 +239,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function saveSettings() {
         apiKey = apiKeyInput.value.trim();
         
-        // 儲存API密鑰到本地存儲
+        // Save API key to local storage
         if (apiKey) {
             localStorage.setItem('openai_api_key', apiKey);
-            showToast('設定已保存', 'success');
+            showToast('Settings saved', 'success');
         } else {
             localStorage.removeItem('openai_api_key');
-            showToast('API密鑰已清除', 'warning');
+            showToast('API key cleared', 'warning');
         }
         
         updateUIBasedOnAPIKey();
@@ -253,14 +253,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function updateUIBasedOnAPIKey() {
-        // 更新UI以反映是否有API密鑰
+        // Update UI to reflect whether there is an API key
         if (apiKey) {
             settingsBtn.innerHTML = '<i class="fas fa-cog"></i>';
             settingsBtn.classList.add('has-key');
         } else {
             settingsBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
             settingsBtn.classList.remove('has-key');
-            showToast('請先設定OpenAI API密鑰', 'warning');
+            showToast('Please set OpenAI API key first', 'warning');
         }
     }
     
@@ -274,13 +274,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // 上傳相關函數
+    // Upload related functions
     function handleImageUpload(e) {
         const file = e.target.files[0];
         if (!file) return;
         
         if (!file.type.match('image.*')) {
-            showToast('請上傳圖片檔案', 'error');
+            showToast('Please upload an image file', 'error');
             return;
         }
         
@@ -306,7 +306,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!file) return;
         
         if (!file.type.match('image.*')) {
-            showToast('請上傳圖片檔案', 'error');
+            showToast('Please upload an image file', 'error');
             return;
         }
         
@@ -320,36 +320,36 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     async function processUploadedImage(file) {
-        // 檢查API密鑰
+        // Check API key
         if (!apiKey) {
-            showToast('請先設定OpenAI API密鑰', 'error');
+            showToast('Please set OpenAI API key first', 'error');
             openSettingsModal();
             return;
         }
         
-        // 顯示加載中狀態
-        showLoading('正在處理圖片...');
+        // Show loading status
+        showLoading('Processing image...');
         
-        // 清空預覽區域
+        // Clear preview area
         imagePreview.innerHTML = '';
         
-        // 創建圖片元素並加入預覽區
+        // Create image element and add to preview area
         const reader = new FileReader();
         reader.onload = async function(e) {
             const img = document.createElement('img');
             img.src = e.target.result;
             imagePreview.appendChild(img);
             
-            // 保存圖片數據
+            // Save image data
             uploadedImageSrc = e.target.result;
             
-            // 禁用上傳區域
+            // Disable upload area
             disableUploadArea();
             
-            // 重置解析狀態
+            // Reset parsing state
             resetParsingState();
             
-            // 自動解析圖片
+            // Automatically parse image
             await parseImageRules(img.src);
         };
         
@@ -359,11 +359,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function disableUploadArea() {
         uploadArea.classList.add('disabled');
         ruleImageInput.classList.add('disabled');
-        uploadStatus.textContent = '圖片已上傳，如需更換請點擊下方重設按鈕';
+        uploadStatus.textContent = 'Image uploaded, click the reset button below to change';
         uploadStatus.classList.add('success');
         uploadStatus.style.display = 'block';
         
-        // 顯示重設按鈕
+        // Show reset button
         resetUploadBtn.style.display = 'flex';
     }
     
@@ -373,15 +373,15 @@ document.addEventListener('DOMContentLoaded', function() {
         calculatorFunctionCode = '';
     }
     
-    // 時間相關函數
+    // Time related functions
     function setCurrentDateTime() {
         const now = new Date();
         
-        // 設定入場時間為現在
+        // Set entry time to now
         entryDateInput.value = formatDateForInput(now, 'date');
         entryTimeInput.value = formatDateForInput(now, 'time');
         
-        // 設定出場時間為現在加一小時
+        // Set exit time to now plus one hour
         const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
         exitDateInput.value = formatDateForInput(oneHourLater, 'date');
         exitTimeInput.value = formatDateForInput(oneHourLater, 'time');
@@ -390,13 +390,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function addOneHour() {
-        // 獲取當前出場時間
+        // Get current exit time
         const exitDateTime = getCombinedDateTime(exitDateInput.value, exitTimeInput.value);
         
-        // 加一小時
+        // Add one hour
         const newExitTime = new Date(exitDateTime.getTime() + 60 * 60 * 1000);
         
-        // 更新輸入框
+        // Update input fields
         exitDateInput.value = formatDateForInput(newExitTime, 'date');
         exitTimeInput.value = formatDateForInput(newExitTime, 'time');
         
@@ -409,7 +409,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (exitDateTime <= entryDateTime) {
             calculateBtn.disabled = true;
-            showToast('出場時間必須晚於入場時間', 'error');
+            showToast('Exit time must be after entry time', 'error');
         } else {
             calculateBtn.disabled = !dynamicCalculatorFunction;
         }
@@ -436,16 +436,16 @@ document.addEventListener('DOMContentLoaded', function() {
         return '';
     }
     
-    // 解析圖片規則相關函數
+    // Parse image rules related functions
     async function parseImageRules(imageSrc) {
         try {
-            // 獲取圖片的base64編碼（去除data:image/jpeg;base64,前綴）
+            // Get base64 encoding of the image (remove data:image/jpeg;base64, prefix)
             const imgBase64 = imageSrc.split(',')[1];
             
-            // 更新加載消息
-            updateLoadingMessage('正在解析停車費規則...');
+            // Update loading message
+            updateLoadingMessage('Analyzing parking fee rules...');
             
-            // 準備發送到OpenAI API的數據
+            // Prepare data to send to OpenAI API
             const payload = {
                 model: "o4-mini",
                 messages: [
@@ -454,7 +454,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         content: [
                             {
                                 type: "text",
-                                text: "這是一張停車場收費規則的圖片。請仔細分析圖片中的停車費率規則，並以結構化JSON格式提取以下信息：\n1. 基本費率（每小時或每次收費）\n2. 時段差異（如有不同時段不同費率）\n3. 特殊優惠（如首小時優惠等）\n4. 一天封頂費用（如有）\n5. 不同車型費率差異（如有）\n\n請僅返回JSON格式數據，不要有任何其他文字。JSON結構應該包含至少一個計費規則，每個規則應該有費率、適用時段、車型等信息。"
+                                text: "This is an image of parking lot fee rules. Please carefully analyze the parking fee rate rules in the image and extract the following information in structured JSON format:\n1. Base rate (hourly or per-entry fee)\n2. Time period differences (if different rates for different times)\n3. Special discounts (such as first hour discounts)\n4. Daily maximum fee (if any)\n5. Rate differences for different vehicle types (if any)\n\nPlease only return JSON format data with no other text. The JSON structure should include at least one pricing rule, each with rate, applicable time period, vehicle type, etc."
                             },
                             {
                                 type: "image_url",
@@ -467,7 +467,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 ]
             };
 
-            // 發送請求到OpenAI API
+            // Send request to OpenAI API
             const response = await fetch('https://api.openai.com/v1/chat/completions', {
                 method: 'POST',
                 headers: {
@@ -479,13 +479,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(`API錯誤: ${errorData.error?.message || '未知錯誤'}`);
+                throw new Error(`API error: ${errorData.error?.message || 'Unknown error'}`);
             }
 
             const data = await response.json();
             let content = data.choices[0].message.content;
             
-            // 嘗試從回應中提取JSON
+            // Try to extract JSON from response
             let jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/) || 
                            content.match(/{[\s\S]*}/);
             
@@ -494,57 +494,57 @@ document.addEventListener('DOMContentLoaded', function() {
                 try {
                     parsedJson = JSON.parse(jsonMatch[1] || jsonMatch[0]);
                 } catch (e) {
-                    throw new Error('無法解析JSON回應');
+                    throw new Error('Could not parse JSON response');
                 }
             } else {
                 try {
-                    // 嘗試直接解析整個回應
+                    // Try to parse the entire response directly
                     parsedJson = JSON.parse(content);
                 } catch (e) {
-                    throw new Error('回應不包含有效的JSON格式');
+                    throw new Error('Response does not contain valid JSON format');
                 }
             }
             
-            // 存儲解析後的規則
+            // Store parsed rules
             parsedParkingRules = parsedJson;
             
-            // 保存到本地儲存
+            // Save to local storage
             localStorage.setItem('parking_calculator_rules', JSON.stringify(parsedParkingRules));
-
-            // 生成計算函數
+            
+            // Generate calculation function
             await generateCalculatorFunction(parsedParkingRules);
             
         } catch (error) {
-            console.error('解析錯誤:', error);
-            uploadStatus.textContent = '圖片解析失敗，請點擊下方重設按鈕重新嘗試';
+            console.error('Parsing error:', error);
+            uploadStatus.textContent = 'Image parsing failed, please click the reset button below to try again';
             uploadStatus.classList.remove('success');
             uploadStatus.classList.add('error');
             hideLoading();
         }
     }
     
-    // 使用OpenAI生成計算函數
+    // Use OpenAI to generate calculation function
     async function generateCalculatorFunction(rules) {
         try {
-            // 更新加載消息
-            updateLoadingMessage('正在生成計算函數...');
+            // Update loading message
+            updateLoadingMessage('Generating calculation function...');
             
-            // 準備發送到OpenAI API的數據
+            // Prepare data to send to OpenAI API
             const payload = {
                 model: "o4-mini",
                 messages: [
                     {
                         role: "system",
-                        content: "你是一個專業的JavaScript程式設計師，精通停車費計算邏輯。請根據提供的停車費規則JSON，生成一個名為calculateFee的JavaScript函數，該函數接收入場時間(entryTime)和出場時間(exitTime)兩個參數(均為JavaScript Date物件)，並返回計算出的停車費用。函數需要精確實現提供的規則，處理各種時間段和特殊情況。只返回函數代碼，不要有任何其他說明文字或代碼塊標記。函數必須完整、有效，並且能夠正確執行。"
+                        content: "You are a professional JavaScript programmer specializing in parking fee calculation logic. Based on the provided parking fee rule JSON, please generate a JavaScript function named calculateFee that accepts entry time (entryTime) and exit time (exitTime) as parameters (both are JavaScript Date objects) and returns the calculated parking fee. The function needs to accurately implement the provided rules, handling various time periods and special cases. Only return the function code without any explanation text or code block markers. The function must be complete, valid, and executable correctly."
                     },
                     {
                         role: "user",
-                        content: `根據以下停車費規則JSON，生成計算停車費的JavaScript函數：\n\n${JSON.stringify(rules, null, 2)}\n\n請確保函數能夠準確處理所有規則和條件，僅返回完整的函數代碼，不要有markdown代碼塊標記，也不要有任何額外解釋。`
+                        content: `Based on the following parking fee rule JSON, generate a JavaScript function to calculate parking fees:\n\n${JSON.stringify(rules, null, 2)}\n\nPlease ensure the function can accurately handle all rules and conditions, only return the complete function code, no markdown code block markers, and no additional explanations.`
                     }
                 ]
             };
 
-            // 發送請求到OpenAI API
+            // Send request to OpenAI API
             const response = await fetch('https://api.openai.com/v1/chat/completions', {
                 method: 'POST',
                 headers: {
@@ -556,174 +556,174 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(`API錯誤: ${errorData.error?.message || '未知錯誤'}`);
+                throw new Error(`API error: ${errorData.error?.message || 'Unknown error'}`);
             }
 
             const data = await response.json();
             let functionCode = data.choices[0].message.content;
             
-            // 清理代碼，移除所有markdown代碼塊標記
+            // Clean up code, remove all markdown code block markers
             functionCode = functionCode.replace(/```(?:javascript|js)?/g, '').replace(/```/g, '').trim();
             
-            // 確保代碼是完整的函數定義
+            // Ensure code is a complete function definition
             if (!functionCode.startsWith('function calculateFee')) {
-                // 嘗試查找函數定義
+                // Try to find function definition
                 const funcMatch = functionCode.match(/function\s+calculateFee[\s\S]*?}/);
                 if (funcMatch) {
                     functionCode = funcMatch[0];
                 } else {
-                    throw new Error('無法從回應中提取有效的calculateFee函數');
+                    throw new Error('Could not extract valid calculateFee function from response');
                 }
             }
             
-            // 檢查函數結構完整性（簡單檢查，確保函數有開始和結束）
+            // Check function structure integrity (simple check to ensure function has beginning and end)
             const openBraces = (functionCode.match(/{/g) || []).length;
             const closeBraces = (functionCode.match(/}/g) || []).length;
             
             if (openBraces !== closeBraces) {
-                throw new Error(`函數代碼大括號不匹配: 開始 ${openBraces} 個, 結束 ${closeBraces} 個`);
+                throw new Error(`Function code braces don't match: ${openBraces} open, ${closeBraces} close`);
             }
             
-            console.log('準備評估的函數代碼:', functionCode);
+            console.log('Function code to evaluate:', functionCode);
             
-            // 保存函數代碼
+            // Save function code
             calculatorFunctionCode = functionCode;
             
-            // 使用更安全的方式創建函數
+            // Use a safer way to create function
             try {
-                // 將函數包裝在一個立即執行的函數表達式中進行測試
+                // Wrap function in an immediately invoked function expression for testing
                 const testFunction = new Function(`
                     try {
                         ${functionCode}
                         return true;
                     } catch (e) {
-                        throw new Error("函數語法錯誤: " + e.message);
+                        throw new Error("Function syntax error: " + e.message);
                     }
                 `);
                 
-                // 執行測試
+                // Run test
                 testFunction();
                 
-                // 如果通過測試，創建真正的函數
+                // If test passes, create the real function
                 dynamicCalculatorFunction = new Function('entryTime', 'exitTime', `
                     ${functionCode}
                     try {
                         return calculateFee(entryTime, exitTime);
                     } catch (e) {
-                        console.error("計算函數執行錯誤:", e);
+                        console.error("Calculation function execution error:", e);
                         throw e;
                     }
                 `);
                 
-                console.log('動態計算函數已生成');
+                console.log('Dynamic calculation function generated');
                 
-                // 測試函數可用性
+                // Test function usability
                 const testEntry = new Date();
-                const testExit = new Date(testEntry.getTime() + 60 * 60 * 1000); // 1小時後
+                const testExit = new Date(testEntry.getTime() + 60 * 60 * 1000); // 1 hour later
                 try {
                     const testFee = dynamicCalculatorFunction(testEntry, testExit);
-                    console.log('函數測試結果:', testFee);
+                    console.log('Function test result:', testFee);
                     
-                    // 保存函數代碼到本地儲存
+                    // Save function code to local storage
                     localStorage.setItem('parking_calculator_function', calculatorFunctionCode);
                     
-                    // 保存所有數據
+                    // Save all data
                     saveToLocalStorage();
                     
-                    // 啟用計算按鈕
+                    // Enable calculate button
                     calculateBtn.disabled = false;
                     
-                    // 更新上傳狀態
-                    uploadStatus.textContent = '圖片已成功解析，可以進行計算';
+                    // Update upload status
+                    uploadStatus.textContent = 'Image successfully analyzed, ready for calculation';
                     uploadStatus.classList.add('success');
                     
-                    // 顯示成功提示
-                    showToast('解析成功，請設定時間並計算', 'success');
+                    // Show success notification
+                    showToast('Analysis complete, please set time and calculate', 'success');
                 } catch (testError) {
-                    console.warn('函數測試警告:', testError.message);
+                    console.warn('Function test warning:', testError.message);
                     throw testError;
                 }
             } catch (evalError) {
-                console.error('函數評估錯誤:', evalError);
-                throw new Error(`無法創建計算函數: ${evalError.message}`);
+                console.error('Function evaluation error:', evalError);
+                throw new Error(`Could not create calculation function: ${evalError.message}`);
             }
             
-            // 隱藏加載指示器
+            // Hide loading indicator
             hideLoading();
         } catch (error) {
-            console.error('生成計算函數錯誤:', error);
-            uploadStatus.textContent = '計算函數生成失敗，請點擊下方重設按鈕重新嘗試';
+            console.error('Error generating calculation function:', error);
+            uploadStatus.textContent = 'Failed to generate calculation function, please click the reset button below to try again';
             uploadStatus.classList.remove('success');
             uploadStatus.classList.add('error');
             
-            // 失敗時，確保動態計算函數設為null
+            // When failed, ensure dynamic calculation function is set to null
             dynamicCalculatorFunction = null;
             calculatorFunctionCode = '';
             
-            // 隱藏加載指示器
+            // Hide loading indicator
             hideLoading();
         }
     }
     
-    // 計算停車費
+    // Calculate parking fee
     function calculateParkingFee() {
-        // 獲取入場和出場時間
+        // Get entry and exit times
         const entryDateTime = getCombinedDateTime(entryDateInput.value, entryTimeInput.value);
         const exitDateTime = getCombinedDateTime(exitDateInput.value, exitTimeInput.value);
         
-        // 檢查時間是否有效
+        // Check if times are valid
         if (isNaN(entryDateTime.getTime()) || isNaN(exitDateTime.getTime())) {
-            showToast('請輸入有效的時間', 'error');
+            showToast('Please enter valid times', 'error');
             return;
         }
         
-        // 檢查出場時間是否早於入場時間
+        // Check if exit time is earlier than entry time
         if (exitDateTime <= entryDateTime) {
-            showToast('出場時間必須晚於入場時間', 'error');
+            showToast('Exit time must be after entry time', 'error');
             return;
         }
         
-        // 計算停車時長（毫秒）
+        // Calculate parking duration (milliseconds)
         const parkingDuration = exitDateTime - entryDateTime;
         
-        // 將毫秒轉換為小時和分鐘
+        // Convert milliseconds to hours and minutes
         const hours = Math.floor(parkingDuration / (1000 * 60 * 60));
         const minutes = Math.floor((parkingDuration % (1000 * 60 * 60)) / (1000 * 60));
         
         let fee = 0;
         let calculationMethod = '';
         
-        // 檢查是否有動態生成的計算函數
+        // Check if there is a dynamically generated calculation function
         if (dynamicCalculatorFunction) {
             try {
-                console.log('正在使用動態生成的計算函數...');
+                console.log('Using dynamically generated calculation function...');
                 fee = dynamicCalculatorFunction(entryDateTime, exitDateTime);
-                calculationMethod = '使用AI生成的專用計算函數';
-                console.log('使用動態生成的計算函數計算費用:', fee);
+                calculationMethod = 'Using AI-generated specialized calculation function';
+                console.log('Fee calculated using dynamic function:', fee);
             } catch (error) {
-                console.error('動態計算函數錯誤:', error);
-                // 如果動態函數失敗，提示用戶
-                showToast(`計算錯誤: ${error.message}。請重新解析圖片。`, 'error');
+                console.error('Dynamic calculation function error:', error);
+                // If dynamic function fails, notify user
+                showToast(`Calculation error: ${error.message}. Please reanalyze the image.`, 'error');
                 return;
             }
         } else {
-            // 如果沒有動態生成的函數，提示用戶需要先解析圖片
+            // If there is no dynamically generated function, prompt user to parse image first
             if (parsedParkingRules) {
-                showToast('請先等待AI完成計算函數生成，或重新解析圖片。', 'warning');
+                showToast('Please wait for AI to complete function generation, or reanalyze the image.', 'warning');
             } else {
-                showToast('請先上傳並解析停車費規則圖片。', 'warning');
+                showToast('Please upload and analyze parking fee rule image first.', 'warning');
             }
             return;
         }
         
-        // 顯示結果，包括使用的計算方法
+        // Show result, including calculation method used
         feeResult.innerHTML = `
             <div class="fee-detail">
                 <div class="fee-time">
-                    <i class="fas fa-clock"></i> 停車時間：${hours}小時${minutes}分鐘
+                    <i class="fas fa-clock"></i> Parking Time: ${hours} hours ${minutes} minutes
                 </div>
                 <div class="fee-amount">
-                    <i class="fas fa-dollar-sign"></i> 預估費用：${fee}元
+                    <i class="fas fa-dollar-sign"></i> Estimated Fee: ${fee} dollars
                 </div>
                 <div class="fee-method">
                     <i class="fas fa-info-circle"></i> ${calculationMethod}
@@ -732,7 +732,7 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
     }
     
-    // 工具函數
+    // Utility functions
     function showLoading(message) {
         loadingMessage.textContent = message;
         loadingOverlay.classList.add('active');
@@ -747,11 +747,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function showToast(message, type = 'info') {
-        // 創建吐司元素
+        // Create toast element
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
         
-        // 添加圖標
+        // Add icon
         let icon = '';
         switch(type) {
             case 'success': icon = '<i class="fas fa-check-circle"></i>'; break;
@@ -768,15 +768,15 @@ document.addEventListener('DOMContentLoaded', function() {
             <button class="toast-close"><i class="fas fa-times"></i></button>
         `;
         
-        // 添加到文檔中
+        // Add to document
         document.body.appendChild(toast);
         
-        // 顯示吐司
+        // Show toast
         setTimeout(() => {
             toast.classList.add('show');
         }, 10);
         
-        // 關閉按鈕事件
+        // Close button event
         const closeBtn = toast.querySelector('.toast-close');
         closeBtn.addEventListener('click', () => {
             toast.classList.remove('show');
@@ -785,7 +785,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 300);
         });
         
-        // 自動關閉
+        // Auto close
         setTimeout(() => {
             if (document.body.contains(toast)) {
                 toast.classList.remove('show');

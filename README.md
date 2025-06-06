@@ -1,53 +1,80 @@
-# 停車費計算器
+# ParkPal
 
-這是一個簡單的靜態網頁應用，允許用戶上傳停車場費率規則的圖片，並根據入場和出場時間計算預估的停車費用。
+A web-based application that automatically analyzes and calculates parking fees by uploading parking fee rule images. Using OpenAI API for image analysis and dynamically generating specialized parking fee calculation functions.
 
-## 功能
+![ParkPal Preview](preview.png)
 
-- 上傳停車費規則圖片
-- 使用OpenAI自動解析停車費規則圖片
-- 設定入場時間（預設為當前時間）
-- 設定出場時間（預設為當前時間加一小時）
-- 根據解析後的規則或預設規則計算停車費
+## Features
 
-## 使用方法
+- **Image Analysis**: Upload parking lot fee rule images, automatically parse into structured data
+- **Smart Calculation**: Use AI to dynamically generate calculation functions specific to parking rules
+- **Easy Operation**: Intuitive interface design for convenient entry and exit time settings
+- **Local Storage**: Analysis results and calculation functions are stored locally, eliminating the need for repeated uploads and analysis
+- **Responsive Design**: Interface suitable for both desktop and mobile devices
 
-1. 打開網頁
-2. 上傳包含停車費規則的圖片
-3. 輸入你的OpenAI API密鑰（用於圖片解析）
-4. 點擊「解析圖片規則」按鈕
-5. 等待解析完成
-6. 調整入場和出場時間（如需要）
-7. 點擊「計算停車費」按鈕
-8. 查看預估的停車費用
+## How to Use
 
-## 如何獲取OpenAI API密鑰
+1. **Set API Key**: Click the settings icon in the top right corner to enter your OpenAI API key
+2. **Upload Rule Image**: Click or drag and drop parking lot rule photos to the upload area
+3. **Set Parking Time**: Choose entry and exit date/time (default is current time and one hour later)
+4. **Calculate Fee**: Click the "Calculate Parking Fee" button to get the estimated result
+5. **Reset Function**: Click "Reset and Re-upload" button when you need to upload a new image
 
-1. 訪問 [OpenAI API 網站](https://platform.openai.com/)
-2. 註冊或登入帳戶
-3. 進入API密鑰頁面
-4. 創建新的API密鑰
-5. 複製API密鑰並在應用中使用
+## Technical Implementation
 
-## 注意事項
+- **Frontend**: Pure HTML, CSS and JavaScript (no framework)
+- **API Integration**: OpenAI Vision API for image analysis
+- **Code Generation**: Using OpenAI to generate specialized JavaScript calculation functions
+- **Local Storage**: Using localStorage to save analysis results and calculation functions
+- **Error Handling**: Complete error capture and user notification system
 
-- 此應用為純前端應用，所有處理都在客戶端進行
-- OpenAI API密鑰只在當前瀏覽器會話中使用，不會被儲存
-- 如果不使用OpenAI解析功能，系統將使用預設計費規則（每小時30元，不足一小時按一小時計費）
-- 使用OpenAI API可能會產生費用，取決於你的OpenAI帳戶方案
+## Installation and Deployment
 
-## 技術說明
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/Jacky97s/parkpal.git
+   cd parkpal
+   ```
 
-- HTML5
-- CSS3
-- JavaScript (vanilla)
-- OpenAI GPT-4 Vision API
+2. Open the index.html file or run using a simple HTTP server:
+   ```bash
+   # Using Python's simple HTTP server
+   python -m http.server
 
-## 未來改進方向
+   # Or using Node.js http-server (requires installation)
+   npx http-server
+   ```
 
-- 改進圖片解析的準確性
-- 支持更複雜的計費規則解析
-- 加入本地儲存功能，避免重複上傳
-- 支持不同車型的費率設置
-- 加入歷史記錄功能
-- 支持離線使用（不依賴OpenAI時） 
+3. Visit `http://localhost:8000` in your browser
+
+## Notes
+
+- A valid OpenAI API key is required to use the image analysis function
+- Analysis accuracy depends on the clarity of the uploaded image and the complexity of the rules
+- Calculation results are for reference only; actual fees may vary due to parking lot policy adjustments
+
+## Privacy Statement
+
+- All data is stored only in the user's local browser
+- API keys are used only for communication with OpenAI services and are not sent elsewhere
+- Uploaded images are only used to parse rules and are not permanently stored on any server
+
+## License
+
+This project is licensed under the MIT License. Please see the LICENSE file for details.
+
+## Contribution Guidelines
+
+Problem reports, feature requests, or code contributions are welcome. Please follow these steps:
+
+1. Fork this repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## Contact
+
+Jacky97s - <jacky.han.hong@gmail.com>
+
+Project Link: <https://github.com/Jacky97s/parkpal>

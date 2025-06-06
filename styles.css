@@ -91,7 +91,7 @@ h2 i {
     box-shadow: 0 1px 3px var(--shadow-color);
 }
 
-/* 上傳區域樣式 */
+/* Upload area styles */
 .upload-area {
     position: relative;
     border: 2px dashed var(--border-color);
@@ -184,7 +184,7 @@ h2 i {
     color: var(--primary-color);
 }
 
-/* 時間選擇器樣式 */
+/* Date/time picker styles */
 .time-section {
     display: flex;
     flex-wrap: wrap;
@@ -239,7 +239,7 @@ label i {
     margin-right: 8px;
 }
 
-/* 按鈕樣式 */
+/* Button styles */
 .calculate-btn {
     display: block;
     width: 100%;
@@ -286,7 +286,7 @@ label i {
     background-color: var(--primary-hover);
 }
 
-/* 結果區域樣式 */
+/* Result area styles */
 .result-section {
     border-top: 2px solid var(--border-color);
 }
@@ -300,7 +300,7 @@ label i {
     border: 1px solid var(--border-color);
 }
 
-/* 解析結果樣式 */
+/* Parsed rules styles */
 .parsed-rules {
     display: none;
 }
@@ -322,7 +322,7 @@ label i {
     white-space: pre-wrap;
 }
 
-/* 模態框樣式 */
+/* Modal styles */
 .modal {
     display: none;
     position: fixed;
@@ -413,7 +413,7 @@ label i {
     justify-content: flex-end;
 }
 
-/* 加載覆蓋層 */
+/* Loading overlay styles */
 .loading-overlay {
     display: none;
     position: fixed;
@@ -453,7 +453,7 @@ label i {
     font-size: 1.2rem;
 }
 
-/* 響應式設計 */
+/* Responsive design */
 @media (max-width: 600px) {
     .time-section {
         flex-direction: column;
@@ -475,7 +475,7 @@ label i {
     }
 }
 
-/* Toast通知樣式 */
+/* Toast notification styles */
 .toast {
     position: fixed;
     bottom: 20px;
@@ -551,7 +551,7 @@ label i {
     color: var(--dark-color);
 }
 
-/* 費用結果樣式 */
+/* Fee result styles */
 .fee-detail {
     display: flex;
     flex-direction: column;
@@ -582,18 +582,18 @@ label i {
     margin-top: 5px;
 }
 
-/* 設定按鈕樣式 */
+/* Settings button styles */
 .settings-btn.has-key {
     color: var(--success-color);
 }
 
-/* 上傳區域拖放效果 */
+/* Upload area drag and drop effect */
 .upload-area.dragover {
     border-color: var(--primary-color);
     background-color: rgba(52, 152, 219, 0.05);
 }
 
-/* 重設按鈕樣式 */
+/* Reset button styles */
 .reset-btn {
     margin-top: 15px;
     background-color: var(--warning-color);
