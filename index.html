@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>停車費計算器</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>停車費計算器</h1>
+            <button id="settings-btn" class="icon-btn" title="設定">
+                <i class="fas fa-cog"></i>
+            </button>
+        </header>
+        
+        <div id="upload-container" class="card-section">
+            <h2><i class="fas fa-upload"></i> 上傳停車費規則圖片</h2>
+            <div class="upload-area" id="upload-area">
+                <input type="file" id="rule-image" accept="image/*" class="file-input">
+                <div class="upload-placeholder">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>點擊或拖曳停車場規則照片至此</p>
+                </div>
+            </div>
+            <div id="image-preview" class="image-preview"></div>
+            <div id="upload-status" class="status-indicator"></div>
+            <button id="reset-upload-btn" class="reset-btn" style="display: none;">
+                <i class="fas fa-redo-alt"></i> 重設並重新上傳
+            </button>
+        </div>
+
+        <div id="calculation-container" class="card-section">
+            <h2><i class="fas fa-calculator"></i> 停車時間</h2>
+            <div class="time-section">
+                <div class="time-input">
+                    <label for="entry-time">
+                        <i class="fas fa-sign-in-alt"></i> 入場時間
+                    </label>
+                    <div class="datetime-picker">
+                        <input type="date" id="entry-date">
+                        <input type="time" id="entry-time">
+                        <button id="now-entry-btn" class="small-btn" title="設為現在">
+                            <i class="fas fa-clock"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="time-input">
+                    <label for="exit-time">
+                        <i class="fas fa-sign-out-alt"></i> 出場時間
+                    </label>
+                    <div class="datetime-picker">
+                        <input type="date" id="exit-date">
+                        <input type="time" id="exit-time">
+                        <button id="plus-hour-btn" class="small-btn" title="加一小時">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <button id="calculate-btn" class="calculate-btn" disabled>
+                <i class="fas fa-calculator"></i> 計算停車費
+            </button>
+        </div>
+
+        <div id="result" class="card-section result-section">
+            <h2><i class="fas fa-receipt"></i> 計算結果</h2>
+            <div id="fee-result" class="fee-display">
+                請上傳圖片並設定時間後計算
+            </div>
+        </div>
+    </div>
+
+    <!-- 設定模態框 -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-cog"></i> 設定</h2>
+                <button id="close-modal-btn" class="icon-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-item">
+                    <label for="api-key">OpenAI API密鑰：</label>
+                    <div class="api-key-input">
+                        <input type="password" id="api-key" placeholder="輸入您的OpenAI API密鑰">
+                        <button id="toggle-password" class="icon-btn">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <p class="setting-hint">API密鑰僅保存在本地瀏覽器中，不會被傳輸到其他地方</p>
+                </div>
+                <div class="setting-actions">
+                    <button id="save-settings-btn" class="primary-btn">儲存設定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全屏加載指示器 -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p id="loading-message">正在處理中...</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
